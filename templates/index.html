@@ -16,12 +16,19 @@
             padding: 6px 12px;
             cursor: pointer;
         }
+
+        #response-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none; /* Initially hidden */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 class="mb-4 text-center">Image Question Answering</h2>
-        <form action="/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="questionForm" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="custom-file mb-3">
                 <input type="file" class="custom-file-input" id="customFile" name="image" required>
                 <label class="custom-file-label" for="customFile">Choose image</label>
@@ -33,17 +40,39 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        <div id="response-container"></div>
     </div>
 
-    <!-- Bootstrap JS and its dependencies -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        // Bootstrap file input label update
+        // Update Bootstrap file input label
         $(".custom-file-input").on("change", function() {
-          var fileName = $(this).val().split("\\").pop();
-          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        // AJAX form submission
+        $("#questionForm").on("submit", function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $("#response-container").html(response).show();
+                },
+                error: function() {
+                    $("#response-container").html("An error occurred.").show();
+                }
+            });
         });
     </script>
 </body>
