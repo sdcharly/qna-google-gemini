@@ -2,33 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Image Analysis</title>
-    <!-- Optional: Include Bootstrap for styling -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Image Question Answering</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            padding-top: 50px;
+        }
+
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body class="container mt-5">
-    <h1>Upload Invoice Image</h1>
-    <form method="POST" enctype="multipart/form-data" class="mb-3">
-        <div class="form-group">
-            <label for="file">Invoice Image:</label>
-            <input type="file" class="form-control-file" name="file" id="file" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label for="question">Question:</label>
-            <input type="text" class="form-control" name="question" id="question" placeholder="Enter your question">
-        </div>
-        <button type="submit" class="btn btn-primary">Analyze</button>
-    </form>
-    {% if response %}
-        <div class="alert alert-success">
-            <h2>Response:</h2>
-            <p>{{ response }}</p>
-        </div>
-    {% endif %}
-    {% if error %}
-        <div class="alert alert-danger">
-            <p>{{ error }}</p>
-        </div>
-    {% endif %}
+<body>
+    <div class="container">
+        <h2 class="mb-4 text-center">Image Question Answering</h2>
+        <form action="/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="image" required>
+                <label class="custom-file-label" for="customFile">Choose image</label>
+                <div class="invalid-feedback">Please select an image.</div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="question" placeholder="Enter your question" required>
+                <div class="invalid-feedback">Please enter a question.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap file input label update
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 </body>
 </html>
