@@ -1,79 +1,62 @@
-import google.generativeai as genai
-from pathlib import Path
 import os
 from flask import Flask, request, render_template
+from pathlib import Path
+import requests
 
-# Set up Flask
-app = Flask(__name__)
+# Assuming an environment variable 'GEMINI_API_KEY' is set in render.com
+api_key = os.environ.get('GEMINI_KEY')
 
-# Configure the Google API
-def configure_genai(api_key):
-    genai.configure(api_key=AIzaSyDe6-BlLPkv2T1h6igWdyTouBhopx9m1XU)
+app = Flask(fetch)
 
-    generation_config = {
-        "temperature": 0.4,
-        "top_p": 1,
-        "top_k": 32,
-        "max_output_tokens": 4096,
-    }
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        file = request.files['file']
+        question_prompt = request.form.get('question')
 
-    safety_settings = [
-        # Safety settings as per your configuration
-    ]
+        if file and question_prompt:
+            file_path = save_file(file)
+            response_text = generate_gemini_response(file_path, question_prompt)
+            return render_template('index.html', response=response_text)
 
-    model = genai.GenerativeModel(model_name="gemini-pro-vision",
-                                  generation_config=generation_config,
-                                  safety_settings=safety_settings)
-    return model
+    return render_template('index.html')
 
-# Function to prepare image input
-def input_image_setup(file_loc):
-    if not Path(file_loc).exists():
-        raise FileNotFoundError(f"Could not find image: {file_loc}")
+def save_file(file):
+    file_path = os.path.join('uploads', file.filename)
+    file.save(file_path)
+    return file_path
 
-    image_parts = [
-        {
-            "mime_type": "image/jpeg",
-            "data": Path(file_loc).read_bytes()
-        }
-    ]
-    return image_parts
-
-# Function to generate response
-def generate_gemini_response(model, input_prompt, image_loc, question_prompt):
+def generate_gemini_response(image_loc, question_prompt):
     image_prompt = input_image_setup(image_loc)
-    prompt_parts = [input_prompt, image_prompt[0], question_prompt]
+
+    prompt_parts = [image_prompt, question_prompt]
     response = model.generate_content(prompt_parts)
     return response.text
 
-# Flask route for handling the form submission
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'No file part'
+def input_image_setup(file_loc):
+    if not (img := Path(file_loc)).exists():
+        raise FileNotFoundError(f"Could not find image: {img}")
 
-        file = request.files['file']
-        if file.filename == '':
-            return 'No selected file'
+    image_parts = {
+        "mime_type": "image/jpeg",
+        "data": Path(file_loc).read_bytes()
+    }
+    return image_parts
 
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join('uploads', filename)
-            file.save(file_path)
+def model_generate_content(prompt_parts):
+    # Replace with appropriate API endpoint and parameters
+    api_endpoint = "https://example.com/gemini-api"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "prompt": prompt_parts,
+        "generation_config": generation_config,
+        "safety_settings": safety_settings
+    }
+    response = requests.post(api_endpoint, json=data, headers=headers)
+    return response.json()
 
-            # Set up model and generate response
-            model = configure_genai(os.environ.get('Gemini_Key'))
-            input_prompt = """
-                           You are an expert in understanding invoices.
-                           You will receive input images as invoices &
-                           you will have to answer questions based on the input image
-                           """
-            question_prompt = "What is the total amount in the invoice?"
-            result = generate_gemini_response(model, input_prompt, file_path, question_prompt)
-            return result
-
-    return render_template('upload.html')
-
-if __name__ == '__main__':
+if __name__ == 'fetch':
     app.run(debug=True)
