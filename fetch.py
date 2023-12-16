@@ -11,14 +11,29 @@ genai.configure(api_key=api_key)
 
 # Set up the model
 generation_config = {
-  "temperature": 0.4,
+  "temperature": 0.6,
   "top_p": 1,
   "top_k": 32,
   "max_output_tokens": 4096,
 }
 
 safety_settings = [
-  #... (your safety settings here)
+   {
+    "category": "HARM_CATEGORY_HARASSMENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_HATE_SPEECH",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  }
 ]
 
 model = genai.GenerativeModel(model_name="gemini-pro-vision",
@@ -39,8 +54,8 @@ def index():
         image = request.files['image']
         question = request.form['question']
         input_prompt = """
-            You are an expert historian and cultural enthusiat.
-            You will receive input images as people in different attires &
+            You are an expert doctor and cardiac surgeon.
+            You will receive input images of ECG and other scan reports &
             you will have to answer questions based on the input image
             """
 
