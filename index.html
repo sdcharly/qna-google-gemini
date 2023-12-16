@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Analysis</title>
+    <!-- Optional: Include Bootstrap for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-<body>
+<body class="container mt-5">
     <h1>Upload Invoice Image</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="text" name="question" placeholder="Enter your question">
-        <input type="submit" value="Analyze">
+    <form method="POST" enctype="multipart/form-data" class="mb-3">
+        <div class="form-group">
+            <label for="file">Invoice Image:</label>
+            <input type="file" class="form-control-file" name="file" id="file" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="question">Question:</label>
+            <input type="text" class="form-control" name="question" id="question" placeholder="Enter your question">
+        </div>
+        <button type="submit" class="btn btn-primary">Analyze</button>
     </form>
     {% if response %}
-        <h2>Response:</h2>
-        <p>{{ response }}</p>
+        <div class="alert alert-success">
+            <h2>Response:</h2>
+            <p>{{ response }}</p>
+        </div>
+    {% endif %}
+    {% if error %}
+        <div class="alert alert-danger">
+            <p>{{ error }}</p>
+        </div>
     {% endif %}
 </body>
 </html>
