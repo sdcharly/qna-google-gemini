@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Configure the Google API
 def configure_genai(api_key):
-    genai.configure(api_key=api_key)
+    genai.configure(api_key=AIzaSyDe6-BlLPkv2T1h6igWdyTouBhopx9m1XU)
 
     generation_config = {
         "temperature": 0.4,
