@@ -10,7 +10,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB upload limit
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Assuming an environment variable 'GEMINI_API_KEY' is set in render.com
-api_key = os.environ.get('GEMINI_API_KEY')
+api_key = os.environ.get('GEMINI_KEY')
 
 # Input prompt for understanding invoices
 input_prompt = """
