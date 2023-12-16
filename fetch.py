@@ -39,8 +39,8 @@ def index():
         image = request.files['image']
         question = request.form['question']
         input_prompt = """
-            You are an expert in understanding invoices.
-            You will receive input images as invoices &
+            You are an expert historian and cultural enthusiat.
+            You will receive input images as people in different attires &
             you will have to answer questions based on the input image
             """
 
