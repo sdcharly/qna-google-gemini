@@ -48,9 +48,11 @@ def index():
         prompt_parts = [input_prompt, image_prompt[0], question]
         response = model.generate_content(prompt_parts)
 
-        return jsonify({'response': response.text})
+        # Return text response directly
+        return response.text
     
     return render_template('index.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
