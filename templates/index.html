@@ -14,7 +14,7 @@
 <body>
     <div class="container">
         <h2 class="mb-4 text-center">Image Question Answering</h2>
-        <form id="questionForm" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="questionForm" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="custom-file mb-3">
                 <input type="file" class="custom-file-input" id="customFile" name="image" required>
                 <label class="custom-file-label" for="customFile">Choose image</label>
@@ -26,9 +26,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <div id="responseArea" class="mt-4">
-            <!-- Response will be displayed here -->
-        </div>
+        <div id="responseContainer" class="mt-4"></div>
     </div>
 
     <!-- Bootstrap JS and its dependencies -->
@@ -36,27 +34,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function(){
-            $('#questionForm').on('submit', function(e){
-                e.preventDefault();
-                var formData = new FormData(this);
-                $.ajax({
-                    url: '/',
-                    type: 'POST',
-                    data: formData,
-                    success: function(data){
-                        $('#responseArea').html('<p>' + data.response + '</p>');
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                });
-            });
+        // Update file input label
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
 
-            // Bootstrap file input label update
-            $(".custom-file-input").on("change", function() {
-                var fileName = $(this).val().split("\\").pop();
-                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        // Handle form submission
+        $("#questionForm").on("submit", function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: formData,
+                success: function(data) {
+                    $('#responseContainer').html('<p class="alert alert-success">' + data.response + '</p>');
+                },
+                cache: false,
+                contentType: false,
+                processData: false
             });
         });
     </script>
