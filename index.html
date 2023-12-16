@@ -1,14 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Invoice Analyzer</title>
+    <meta charset="UTF-8">
+    <title>Image Analysis</title>
 </head>
 <body>
-  <h1>Upload Invoice Image</h1>
-  <form action="/" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="submit" value="Analyze Invoice">
-  </form>
+    <h1>Upload Invoice Image</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="text" name="question" placeholder="Enter your question">
+        <input type="submit" value="Analyze">
+    </form>
+    {% if response %}
+        <h2>Response:</h2>
+        <p>{{ response }}</p>
+    {% endif %}
 </body>
 </html>
