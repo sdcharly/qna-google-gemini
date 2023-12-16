@@ -6,7 +6,7 @@ import requests
 # Assuming an environment variable 'GEMINI_API_KEY' is set in render.com
 api_key = os.environ.get('GEMINI_KEY')
 
-app = Flask(fetch)
+app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -30,12 +30,12 @@ def generate_gemini_response(image_loc, question_prompt):
     image_prompt = input_image_setup(image_loc)
 
     prompt_parts = [image_prompt, question_prompt]
-    response = model.generate_content(prompt_parts)
-    return response.text
+    response = model_generate_content(prompt_parts)
+    return response['text']  # Assuming the response has a 'text' key
 
 def input_image_setup(file_loc):
-    if not (img := Path(file_loc)).exists():
-        raise FileNotFoundError(f"Could not find image: {img}")
+    if not Path(file_loc).exists():
+        raise FileNotFoundError(f"Could not find image: {file_loc}")
 
     image_parts = {
         "mime_type": "image/jpeg",
@@ -50,13 +50,14 @@ def model_generate_content(prompt_parts):
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
+    # Add the missing configuration here
     data = {
         "prompt": prompt_parts,
-        "generation_config": generation_config,
-        "safety_settings": safety_settings
+        # "generation_config": generation_config,  # Define this or remove it
+        # "safety_settings": safety_settings      # Define this or remove it
     }
     response = requests.post(api_endpoint, json=data, headers=headers)
     return response.json()
 
-if __name__ == 'fetch':
+if __name__ == '__main__':
     app.run(debug=True)
