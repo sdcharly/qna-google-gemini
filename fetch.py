@@ -2,11 +2,18 @@ import os
 from flask import Flask, request, render_template
 from pathlib import Path
 import requests
+from werkzeug.utils import secure_filename
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Assuming an environment variable 'GEMINI_API_KEY' is set in render.com
 api_key = os.environ.get('GEMINI_KEY')
 
 app = Flask(__name__)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -14,15 +21,18 @@ def index():
         file = request.files['file']
         question_prompt = request.form.get('question')
 
-        if file and question_prompt:
-            file_path = save_file(file)
+        if file and allowed_file(file.filename) and question_prompt:
+            filename = secure_filename(file.filename)
+            file_path = save_file(file, filename)
             response_text = generate_gemini_response(file_path, question_prompt)
             return render_template('index.html', response=response_text)
+        else:
+            return render_template('index.html', error="Invalid file type. Only image files are allowed.")
 
     return render_template('index.html')
 
-def save_file(file):
-    file_path = os.path.join('uploads', file.filename)
+def save_file(file, filename):
+    file_path = os.path.join('uploads', filename)
     file.save(file_path)
     return file_path
 
@@ -31,11 +41,11 @@ def generate_gemini_response(image_loc, question_prompt):
 
     prompt_parts = [image_prompt, question_prompt]
     response = model_generate_content(prompt_parts)
-    return response['text']  # Assuming the response has a 'text' key
+    return response.text
 
 def input_image_setup(file_loc):
-    if not Path(file_loc).exists():
-        raise FileNotFoundError(f"Could not find image: {file_loc}")
+    if not (img := Path(file_loc)).exists():
+        raise FileNotFoundError(f"Could not find image: {img}")
 
     image_parts = {
         "mime_type": "image/jpeg",
@@ -45,16 +55,15 @@ def input_image_setup(file_loc):
 
 def model_generate_content(prompt_parts):
     # Replace with appropriate API endpoint and parameters
-    api_endpoint = "https://example.com/gemini-api"
+    api_endpoint = "//uploads"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    # Add the missing configuration here
     data = {
         "prompt": prompt_parts,
-        # "generation_config": generation_config,  # Define this or remove it
-        # "safety_settings": safety_settings      # Define this or remove it
+        "generation_config": generation_config,
+        "safety_settings": safety_settings
     }
     response = requests.post(api_endpoint, json=data, headers=headers)
     return response.json()
