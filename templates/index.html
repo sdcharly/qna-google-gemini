@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Image Question Answering</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ask your Virtual Doctor</title>
+    <!-- Bootstrap CSS (Upgraded to Bootstrap 5) -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .container {
-            padding-top: 50px;
+            padding-top: 20px;
         }
 
         .custom-file-upload {
@@ -26,7 +27,7 @@
 
         #image-preview {
             max-width: 100%;
-            max-height: 200px;
+            height: auto;
         }
     </style>
 </head>
@@ -34,9 +35,9 @@
     <div class="container">
         <h2 class="mb-4 text-center">Ask your Virtual Doctor from your Scan/X-Ray/ECGs</h2>
         <form id="questionForm" enctype="multipart/form-data" class="needs-validation" novalidate>
-            <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input" id="customFile" name="image" required>
-                <label class="custom-file-label" for="customFile">Choose image</label>
+            <div class="mb-3">
+                <input type="file" class="form-control" id="customFile" name="image" required>
+                <label for="customFile" class="form-label">Choose image</label>
                 <div class="invalid-feedback">Please select an image.</div>
             </div>
             <div id="image-preview-container">
@@ -51,15 +52,15 @@
         <div id="response-container"></div>
     </div>
 
-    <!-- jQuery and Bootstrap JS -->
+    <!-- jQuery and Bootstrap JS (Upgraded to Bootstrap 5) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
     <script>
-        // Update Bootstrap file input label and display image preview
-        $(".custom-file-input").on("change", function(e) {
+        // Update file input label and display image preview
+        $("#customFile").on("change", function(e) {
             var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            $(this).next(".form-label").html(fileName);
 
             // Display image preview
             var reader = new FileReader();
