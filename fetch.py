@@ -16,7 +16,7 @@ app.config['ENV'] = 'production'
 app.config['DEBUG'] = False
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-api_key = os.environ.get('GEMINI_API_KEY')
+api_key = os.environ.get('GEMINI_KEY')
 
 # Input prompt for understanding invoices
 input_prompt = """
