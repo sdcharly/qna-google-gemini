@@ -3,64 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Question Answering</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding-top: 50px;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input[type="file"] {
+        .custom-file-upload {
             border: 1px solid #ccc;
             display: inline-block;
             padding: 6px 12px;
             cursor: pointer;
         }
-
-        input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <form action="/" method="post" enctype="multipart/form-data">
-            <input type="file" name="image" required>
-            <input type="text" name="question" placeholder="Enter your question" required>
-            <input type="submit" value="Submit">
+        <h2 class="mb-4 text-center">Image Question Answering</h2>
+        <form action="/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="image" required>
+                <label class="custom-file-label" for="customFile">Choose image</label>
+                <div class="invalid-feedback">Please select an image.</div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="question" placeholder="Enter your question" required>
+                <div class="invalid-feedback">Please enter a question.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+
+    <!-- Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap file input label update
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 </body>
 </html>
