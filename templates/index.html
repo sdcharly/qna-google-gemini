@@ -2,40 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ask your Virtual Doctor</title>
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Image Question Answering</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            padding-top: 50px;
+        }
+
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        #response-container, #image-preview-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none; /* Initially hidden */
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 200px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4">
-        <h2 class="text-center text-2xl font-bold my-5">Ask your Virtual Doctor from your Scan/X-Ray/ECGs</h2>
-        <form id="questionForm" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="customFile">
-                    Choose image
-                </label>
-                <input type="file" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customFile" name="image" required>
-                <p class="text-red-500 text-xs italic">Please select an image.</p>
+<body>
+    <div class="container">
+        <h2 class="mb-4 text-center">Ask your Virtual Doctor from your Scan/X-Ray/ECGs</h2>
+        <form id="questionForm" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="image" required>
+                <label class="custom-file-label" for="customFile">Choose image</label>
+                <div class="invalid-feedback">Please select an image.</div>
             </div>
-            <div id="image-preview-container" class="mb-4 hidden">
-                <img id="image-preview" src="#" alt="Image Preview" class="max-w-full h-auto" />
+            <div id="image-preview-container">
+                <img id="image-preview" src="#" alt="Image Preview" />
             </div>
-            <div class="mb-6">
-                <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="question" placeholder="Enter your question" required>
-                <p class="text-red-500 text-xs italic">Please enter a question.</p>
+            <div class="form-group">
+                <input type="text" class="form-control" name="question" placeholder="Enter your question" required>
+                <div class="invalid-feedback">Please enter a question.</div>
             </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Submit
-            </button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <div id="response-container" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 hidden"></div>
+        <div id="response-container"></div>
     </div>
 
-    <!-- jQuery -->
+    <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        // JavaScript for handling form submission and image preview
+        // Update Bootstrap file input label and display image preview
+        $(".custom-file-input").on("change", function(e) {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+
+            // Display image preview
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image-preview').attr('src', e.target.result);
+                $('#image-preview-container').show();
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+
+        // AJAX form submission
+        $("#questionForm").on("submit", function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $("#response-container").html(response).show();
+                },
+                error: function() {
+                    $("#response-container").html("An error occurred.").show();
+                }
+            });
+        });
     </script>
 </body>
 </html>
