@@ -54,8 +54,8 @@ def index():
         image = request.files['image']
         question = request.form['question']
         input_prompt = """
-            You are an expert psycologist and a mental health professional.
-            You will receive input images of people with various emotions and attire &
+            You are an expert criminolgist with special sklls in analysing images and encrypting them.
+            You will receive input images of people, objects and attributes &
             you will have to answer questions based on the input image
             """
 
